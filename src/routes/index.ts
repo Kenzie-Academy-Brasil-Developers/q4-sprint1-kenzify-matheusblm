@@ -1,18 +1,21 @@
 import { Router } from 'express';
-import validateShape from '../middlewares/validate';
-import { userSchema } from '../shapes/user';
+
+import {
+  registerUser,
+  loginUser,
+  updatePlaylist,
+  deleteMusic,
+  getUsers,
+} from '../controllers';
+import { createUserShape, loginUserShape } from '../shapes';
+import { validateAuth, validate } from '../middlewares';
 
 const router = Router();
 
-router.post('/register', validateShape(userSchema));
-router.post('/register', validateShape(userSchema));
-router.get('');
+router.post('/register', validate(createUserShape), registerUser);
+router.get('', validateAuth, getUsers);
+router.post('/login', validate(loginUserShape), loginUser);
+router.put('/playlist', validateAuth, updatePlaylist);
+router.delete('/playlist', validateAuth, deleteMusic);
 
-export { router };
-
-// POST	/users/register	Criação de usuários
-// GET	/users	Listar usuários (necessita de token)
-// POST	/users/login	Gera um token JWT recebendo username e password no corpo da requisição como JSON.
-// PUT	/users/playlist	Atualizar playlist do usuário logado (necessita de token)
-// PUT	/users/playlist?artist=name&song=title	Atualizar propriedade "listenedByMe" da música solicitada (necessita de token)
-// DELETE	/users/playlist?artist=name&song=title	Remove a música da playlist (necessita de token)
+export default router;
